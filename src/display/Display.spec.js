@@ -1,12 +1,25 @@
 import React from "react";
-import { getByTestId, render } from "@testing-library/react";
+import { fireEvent, getByTestId, render } from "@testing-library/react";
 
 import Display from "./Display";
+import Controls from "../controls/Controls";
 
 test("gate defaults to unlocked and open", () => {
   const { getByText } = render(<Display />);
   expect(getByText(/unlocked/i));
   expect(getByText(/open/i));
+});
+
+test("cannot be closed or opened if locked", () => {
+  const { getByText } = render(<Controls locked={true} />);
+  const closed = jest.fn();
+  const open = jest.fn();
+  const btn = getByText(/close gate/i);
+
+  fireEvent.click(btn);
+
+  expect(closed).toHaveBeenCalledTimes(0);
+  expect(open).toHaveBeenCalledTimes(0);
 });
 
 test("gate is open if closed is false", () => {
